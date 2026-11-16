@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jordy &amp; Nelly · Les Bibou</title>
+  <meta name="description" content="Des looks, du love &amp; du lifestyle. Tous nos réseaux, notre dernière vidéo et nos coulisses.">
+  <link rel="icon" href="images/avatar.jpg">
+  <link rel="apple-touch-icon" href="images/avatar.jpg">
+  <!-- Aperçu quand le lien est partagé (Instagram, iMessage, WhatsApp…) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Jordy &amp; Nelly · Les Bibou">
+  <meta property="og:description" content="Des looks, du love &amp; du lifestyle. Tous nos réseaux au même endroit.">
+  <meta property="og:url" content="https://iamjordynelly.github.io/">
+  <meta property="og:image" content="https://iamjordynelly.github.io/images/photo-5.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Police de secours (Android/PC) chargée sans bloquer l'affichage : les iPhone utilisent la police Apple -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="style.css?v=29">
+  <meta name="theme-color" content="#ffffff">
+  <!-- Applique le mode du téléphone avant l'affichage (évite un flash blanc en mode sombre) -->
+  <script>
+    try {
+      var t = sessionStorage.getItem("theme-visit") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <!-- Navigation verre dépoli -->
+  <nav class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#top" class="nav-logo" id="navLogo"></a>
+      <div class="nav-links">
+        <a href="#communaute">Communauté</a>
+        <a href="#video">Vidéo</a>
+        <a href="#photos">Photos</a>
+        <a href="#liens">Contact</a>
+      </div>
+      <div class="nav-actions">
+        <button class="nav-btn" id="themeBtn" aria-label="Mode clair ou sombre" title="Mode clair / sombre">
+          <svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg>
+        </button>
+        <button class="nav-btn" id="shareBtn" aria-label="Partager la page" title="Partager">
+          <svg viewBox="0 0 24 24"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v13"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="hero-text">
+      <p class="eyebrow fade" id="tagline"></p>
+      <h1 class="hero-title fade" id="name"></h1>
+      <p class="hero-sub fade" id="heroSub"></p>
+      <div class="hero-actions fade" id="heroCta"></div>
+    </div>
+    <div class="hero-media-wrap">
+      <!-- Une seule carte : la miniature + une bande titre en dessous (façon Apple TV) -->
+      <div class="hero-card" id="heroCard">
+        <div class="hero-media" id="heroMedia"></div>
+        <button class="hero-foot" id="heroCaption"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- COMMUNAUTÉ -->
+    <section class="section alt" id="communaute">
+      <div class="wrap">
+        <p class="kicker reveal">Communauté</p>
+        <h2 class="headline reveal"><span class="grad-text" id="totalFollowers">0</span><br>personnes, sur tous les réseaux.</h2>
+        <p class="lead reveal" id="updated"></p>
+        <div class="stats" id="platforms"></div>
+      </div>
+    </section>
+
+    <!-- VIDÉO (section sombre) -->
+    <section class="section dark" id="video">
+      <div class="wrap">
+        <p class="kicker reveal">Sur notre chaîne YouTube</p>
+        <h2 class="headline reveal">On y parle de<br><span class="rotator" id="rotator" aria-live="polite"></span></h2>
+        <p class="lead reveal" id="channelMeta"></p>
+      </div>
+      <div class="gallery is-video" id="vcarousel" tabindex="0" aria-roledescription="carrousel" aria-label="Vidéos de la chaîne"></div>
+      <p class="gal-caption" id="vidCaption" aria-hidden="true"></p>
+      <div class="pager">
+        <div class="pager-dots" id="vdots"></div>
+        <button class="pager-play" id="vplayPause" aria-label="Mettre en pause le défilement">
+          <svg class="i-pause" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></svg>
+          <svg class="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></svg>
+        </button>
+      </div>
+      <div class="wrap"><div class="video-actions" id="channelActions"></div></div>
+    </section>
+
+    <!-- GALERIE -->
+    <section class="section" id="photos">
+      <div class="wrap">
+        <p class="kicker reveal">Galerie</p>
+        <h2 class="headline reveal">Les coulisses.<br><span class="soft">Et tout le reste.</span></h2>
+      </div>
+      <div class="gallery" id="gallery" tabindex="0" aria-roledescription="carrousel" aria-label="Galerie photos"></div>
+      <p class="gal-caption" id="galCaption" aria-hidden="true"></p>
+      <div class="pager">
+        <div class="pager-dots" id="dots"></div>
+        <button class="pager-play" id="playPause" aria-label="Mettre en pause le défilement">
+          <svg class="i-pause" viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></svg>
+          <svg class="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- LIENS -->
+    <section class="section alt" id="liens">
+      <div class="wrap narrow">
+        <p class="kicker reveal">Restons en contact</p>
+        <h2 class="headline reveal">Un message ?<br><span class="soft">Une collab ?</span></h2>
+        <div class="list reveal" id="links"></div>
+        <div class="list reveal" id="socialList"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p id="bioFoot"></p>
+      <hr>
+      <div class="footer-row">
+        <span>© <span id="year"></span> <span id="footName"></span>. Tous droits réservés.</span>
+        <span id="location"></span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js?v=29"></script>
+  <script src="app.js?v=29"></script>
+</body>
+</html>
