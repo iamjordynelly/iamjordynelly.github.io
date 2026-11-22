@@ -272,7 +272,7 @@
     const s = preview || P.season || "aucune";
     if (s !== "auto") return P.seasons?.[s] ? s : null;
     const d = new Date(), m = d.getMonth() + 1, day = d.getDate();
-    if ((m === 12 && day >= 28) || (m === 1 && day <= 6)) return P.seasons?.nouvelan ? "nouvelan" : "noel";
+    if ((m === 12 && day >= 28) || (m === 1 && day <= 9)) return P.seasons?.nouvelan ? "nouvelan" : "noel";
     if ((m === 11 && day >= 15) || m === 12) return "noel";
     return null;
   })();

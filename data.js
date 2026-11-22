@@ -20,7 +20,7 @@ window.PROFILE = {
   theme: "auto", // "auto" = suit le mode clair/sombre du téléphone · "light" · "dark"
 
   // Décor de saison, ajouté par-dessus le site sans le modifier.
-  // "auto" = Noël du 15 novembre au 27 décembre, puis Nouvel An du 28 décembre au 6 janvier.
+  // "auto" = Noël du 15 novembre au 27 décembre, puis Nouvel An du 28 décembre au 9 janvier. Dès le 10 janvier : site normal, sans décor.
   // "noel" / "nouvelan" = forcer une saison · "aucune" = site normal
   // Aperçu sans rien changer : ajouter ?saison=nouvelan à l'adresse du site.
   season: "auto",
