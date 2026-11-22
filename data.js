@@ -56,7 +56,7 @@ window.PROFILE = {
   ],
 
   latestVideo: {
-    id: "KE0dGryr7Xs",
+    id: "e0cCLSJNSPY",
     title: "Partir en vacances sans son couple, c'est un red flag",
     publishedAt: "2026-11-22T12:00:37Z",
     views: 0,
