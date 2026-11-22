@@ -7,6 +7,7 @@ on:
     branches: [main]
   schedule:
     - cron: "*/15 * * * *"
+    - cron: "7 5 * * *"   # abonnés : une fois par jour (6h07 / 7h07 à Paris)
   workflow_dispatch:
 
 permissions:
@@ -38,22 +39,35 @@ jobs:
           echo "$out"
           if [[ "$out" == UPDATED* ]]; then echo "changed=true" >> "$GITHUB_OUTPUT"; fi
 
-      - name: Enregistrer la nouvelle vidéo
-        if: steps.video.outputs.changed == 'true'
+      - name: Nombre d'abonnés (une fois par jour)
+        id: followers
+        if: github.event.schedule == '7 5 * * *' || github.event_name == 'workflow_dispatch'
+        run: |
+          out=$(node tools/update-followers.mjs)
+          echo "$out"
+          if [[ "$out" == *UPDATED* ]]; then echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Enregistrer les changements
+        id: save
+        if: steps.video.outputs.changed == 'true' || steps.followers.outputs.changed == 'true'
         run: |
           git config user.name "Jordy & Nelly"
           git config user.email "357504358+iamjordynelly@users.noreply.github.com"
           git add data.js index.html
-          git commit -m "Nouvelle vidéo en haut du site (automatique)"
+          msg="Mise à jour automatique :"
+          [[ "${{ steps.video.outputs.changed }}" == "true" ]] && msg="$msg nouvelle vidéo"
+          [[ "${{ steps.followers.outputs.changed }}" == "true" ]] && msg="$msg abonnés"
+          git commit -m "$msg"
           git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
 
-      # On ne republie que si le site a changé (push manuel ou nouvelle vidéo)
+      # On ne republie que si le site a changé (push manuel, nouvelle vidéo ou abonnés)
       - uses: actions/configure-pages@v5
-        if: github.event_name != 'schedule' || steps.video.outputs.changed == 'true'
+        if: github.event_name == 'push' || steps.save.outputs.changed == 'true'
       - uses: actions/upload-pages-artifact@v3
-        if: github.event_name != 'schedule' || steps.video.outputs.changed == 'true'
+        if: github.event_name == 'push' || steps.save.outputs.changed == 'true'
         with:
           path: .
       - id: deploy
         uses: actions/deploy-pages@v4
-        if: github.event_name != 'schedule' || steps.video.outputs.changed == 'true'
+        if: github.event_name == 'push' || steps.save.outputs.changed == 'true'

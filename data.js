@@ -3,7 +3,7 @@
 //  Plus tard, un robot (GitHub Actions) mettra à jour
 //  automatiquement les abonnés et la dernière vidéo ici.
 //
-//  Chiffres relevés sur les profils publics le 16/11/2026.
+//  Chiffres relevés sur les profils publics le 22/11/2026.
 //  followers: null = pas encore renseigné (à compléter).
 // ============================================================
 const YT = (id) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
@@ -47,12 +47,12 @@ window.PROFILE = {
 
   // Le 1er réseau sert de bouton principal en haut de page
   socials: [
-    { platform: "tiktok",    handle: "@iamjordynelly", url: "https://www.tiktok.com/@iamjordynelly",   followers: 105400, cta: "Suivre" },
-    { platform: "instagram", handle: "@iamjordynelly", url: "https://www.instagram.com/iamjordynelly", followers: 7338,   cta: "Suivre" },
+    { platform: "tiktok",    handle: "@iamjordynelly", url: "https://www.tiktok.com/@iamjordynelly",   followers: 105300, cta: "Suivre" },
+    { platform: "instagram", handle: "@iamjordynelly", url: "https://www.instagram.com/iamjordynelly", followers: 7520,   cta: "Suivre" },
     { platform: "youtube",   handle: "@iamjordynelly", url: "https://www.youtube.com/@iamjordynelly?sub_confirmation=1",  followers: 2190,   cta: "S'abonner" },
-    { platform: "threads",   handle: "@iamjordynelly", url: "https://www.threads.com/@iamjordynelly",  followers: 473,    cta: "Suivre" },
-    { platform: "facebook",  handle: "iamjordynelly",  url: "https://www.facebook.com/p/iamjordynelly-100075907790832/", followers: 702,   cta: "Suivre" },
-    { platform: "bereal",    handle: "iamjordynelly",  url: "https://bere.al/iamjordynelly",           followers: 249,    cta: "Ajouter" }
+    { platform: "threads",   handle: "@iamjordynelly", url: "https://www.threads.com/@iamjordynelly",  followers: 480,    cta: "Suivre" },
+    { platform: "facebook",  handle: "iamjordynelly",  url: "https://www.facebook.com/p/iamjordynelly-100075907790832/", followers: 705,   cta: "Suivre" },
+    { platform: "bereal",    handle: "iamjordynelly",  url: "https://bere.al/iamjordynelly",           followers: 252,    cta: "Ajouter" }
   ],
 
   latestVideo: {
