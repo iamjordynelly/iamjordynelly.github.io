@@ -3,6 +3,20 @@
   const $ = (id) => document.getElementById(id);
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // Hors période des fêtes (du 10 janvier au 14 novembre), on retire aussi le contenu de Noël :
+  // les vidéos et thèmes qui parlent de Noël ou de l'Avent. Ils reviennent tout seuls le 15 novembre.
+  const festive = (() => {
+    const s = new URLSearchParams(location.search).get("saison") || P.season || "aucune";
+    if (s !== "auto") return s === "noel" || s === "nouvelan";
+    const d = new Date(), m = d.getMonth() + 1, day = d.getDate();
+    return (m === 11 && day >= 15) || m === 12 || (m === 1 && day <= 9);
+  })();
+  if (!festive) {
+    const xmas = (s = "") => /no[eë]l|avent|christmas/i.test(s);
+    P.channelThemes = (P.channelThemes || []).filter((t) => !xmas(t));
+    P.featured = (P.featured || []).filter((f) => !xmas(`${f.theme} ${f.title}`));
+  }
+
   // ================= Icônes =================
   const ICONS = {
     youtube: '<svg class="brand" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>',
