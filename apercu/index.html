@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Aperçu · Jordy & Nelly</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f5f5f7; color: #1d1d1f;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; }
+  @media (prefers-color-scheme: dark) { body { background: #000; color: #f5f5f7; } a { background: #1c1c1e; } }
+  main { width: min(420px, 100% - 32px); padding: 32px 0; }
+  h1 { font-size: 28px; letter-spacing: -.02em; margin: 0 0 6px; }
+  p { color: #6e6e73; margin: 0 0 22px; }
+  a { display: block; padding: 16px 18px; margin-bottom: 12px; border-radius: 16px; background: #fff; color: inherit;
+    text-decoration: none; box-shadow: 0 4px 24px rgba(0,0,0,.06); font-weight: 600; }
+  a small { display: block; font-weight: 400; color: #86868b; margin-top: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Aperçu du site ✨</h1>
+  <p>Les visiteurs ne voient pas ces versions avant la date prévue.</p>
+  <a data-q="saison=nouvelan">Nouvel An · version calme<small>Celle qui est programmée pour le 28 décembre</small></a>
+  <a data-q="saison=nouvelan&vivant=1">Nouvel An · version vivante<small>Fusées, prénoms qui sautent, halo doré</small></a>
+  <a data-q="saison=nouvelan&vivant=1&minuit=7200">Le 31 décembre, 2 h avant minuit<small>Le grand décompte sous le titre</small></a>
+  <a data-q="saison=nouvelan&vivant=1&minuit=25">Le passage à minuit<small>Les 10 dernières secondes puis « Bonne année »</small></a>
+  <a data-q="saison=noel">Noël<small>La version actuelle</small></a>
+</main>
+<script>
+  // Un numéro unique à chaque clic : le téléphone recharge toujours la dernière version
+  document.querySelectorAll("a[data-q]").forEach((a) => {
+    a.href = "../?" + a.dataset.q;
+    a.addEventListener("click", () => { a.href = "../?" + a.dataset.q + "&t=" + Date.now(); });
+  });
+</script>
+</body>
+</html>

@@ -394,7 +394,9 @@
     const now = new Date();
     // L'année qui arrive (en janvier, c'est déjà l'année en cours)
     const year = now.getMonth() === 0 ? now.getFullYear() : now.getFullYear() + 1;
-    const midnight = new Date(year, 0, 1);
+    // Test : ?minuit=30 fait comme si minuit arrivait dans 30 secondes
+    const testIn = Number(new URLSearchParams(location.search).get("minuit"));
+    const midnight = testIn > 0 ? new Date(Date.now() + testIn * 1000) : new Date(year, 0, 1);
     const fill = (s) => esc(String(s || "").replace(/\{annee\}/g, year));
     const SPARK = `<svg class="ny-spark" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 1.5c.7 4.6 2.6 7.6 9 10.5-6.4 2.9-8.3 5.9-9 10.5-.7-4.6-2.6-7.6-9-10.5 6.4-2.9 8.3-5.9 9-10.5z" fill="url(#nyGold)"/>
@@ -407,16 +409,58 @@
         <div class="ribbon ny-ribbon">${SPARK}<span id="nyText"></span>${N.ribbonLink ? `<a class="ribbon-link" href="${esc(N.ribbonLink.url)}" target="_blank" rel="noopener">${esc(N.ribbonLink.label)}</a>` : ""}</div>`);
       const txt = $("nyText");
       const two = (n) => String(n).padStart(2, "0");
+      // Grand décompte sous le titre, les dernières 24 heures
+      const BIG_MS = (N.bigCountdownHours ?? 24) * 3600e3;
+      let big = null, overlay = null, lastS = -1;
+      const makeBig = () => {
+        $("heroCta").insertAdjacentHTML("beforebegin", `
+          <div class="ny-big fade" id="nyBig" role="timer" aria-live="off">
+            <p class="ny-big-label">Plus que</p>
+            <div class="ny-big-digits">
+              <span><b id="nyH">00</b><small>heures</small></span><i>:</i>
+              <span><b id="nyM">00</b><small>minutes</small></span><i>:</i>
+              <span><b id="nyS">00</b><small>secondes</small></span>
+            </div>
+            <p class="ny-big-label">avant ${year}</p>
+          </div>`);
+        big = $("nyBig");
+      };
+      // Les 10 dernières secondes : un grand chiffre au milieu de l'écran
+      const showOverlay = (n) => {
+        if (!overlay) {
+          document.body.insertAdjacentHTML("beforeend", `<div class="ny-overlay" id="nyOverlay" aria-hidden="true"><b></b></div>`);
+          overlay = $("nyOverlay");
+        }
+        const b = overlay.querySelector("b");
+        b.textContent = n; b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop");
+      };
+      // Minuit : feu d'artifice géant + "Bonne année"
+      const celebrate = () => {
+        if (!overlay) showOverlay("");
+        const b = overlay.querySelector("b");
+        b.innerHTML = `Bonne année<br>${year} !`; b.classList.add("ny-happy"); b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop");
+        if (big) big.innerHTML = `<p class="ny-big-happy">Bonne année ${year} ! 🥂</p>`;
+        if (!reduce) for (let i = 0; i < 14; i++) setTimeout(() => burst(innerWidth * (.1 + Math.random() * .8), innerHeight * (.15 + Math.random() * .5), 70), i * 260);
+        setTimeout(() => overlay.classList.add("out"), 4200);
+        setTimeout(() => overlay.remove(), 5200);
+      };
       const update = () => {
         const left = midnight - Date.now();
         if (left <= 0) { txt.innerHTML = fill(N.ribbonAfter || N.ribbon); return false; }
-        const s = Math.floor(left / 1000), d = Math.floor(s / 86400), h = Math.floor(s / 3600) % 24, m = Math.floor(s / 60) % 60;
-        const count = d >= 1 ? `J-${d + (h || m ? 1 : 0)}` : `${two(h)}:${two(m)}:${two(s % 60)}`;
+        const s = Math.ceil(left / 1000), d = Math.floor(s / 86400), h = Math.floor(s / 3600) % 24, m = Math.floor(s / 60) % 60;
+        const count = d >= 1 ? `J-${Math.ceil(s / 86400)}` : `${two(h)}:${two(m)}:${two(s % 60)}`;
         txt.innerHTML = `${fill(N.ribbon)} <b class="ny-count">${count}</b>`;
+        if (left <= BIG_MS) {
+          if (!big) makeBig();
+          $("nyH").textContent = two(Math.floor(s / 3600)); $("nyM").textContent = two(m); $("nyS").textContent = two(s % 60);
+          big.classList.toggle("last-minute", s <= 60);
+          if (s <= 10 && s !== lastS) showOverlay(s);
+        }
+        lastS = s;
         return true;
       };
       if (update()) {
-        const iv = setInterval(() => { if (!update()) { clearInterval(iv); if (!reduce) burst(innerWidth / 2, innerHeight * .35, 90); } }, 1000);
+        const iv = setInterval(() => { if (!update()) { clearInterval(iv); celebrate(); } }, 250);
       }
     }
 
