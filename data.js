@@ -56,10 +56,10 @@ window.PROFILE = {
   ],
 
   latestVideo: {
-    id: "e0cCLSJNSPY",
-    title: "Je fabrique un calendrier de l'Avent pour ma copine",
-    publishedAt: "2026-11-15T12:00:20Z",
-    views: 61,
+    id: "KE0dGryr7Xs",
+    title: "Partir en vacances sans son couple, c'est un red flag",
+    publishedAt: "2026-11-22T12:00:37Z",
+    views: 0,
     duration: ""
   },
 
