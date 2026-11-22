@@ -387,6 +387,10 @@
   if (activeSeason === "nouvelan" && P.seasons?.nouvelan) {
     const N = P.seasons.nouvelan;
     document.documentElement.dataset.season = "nouvelan";
+    // Variante "vivante" : plus de mouvement (aperçu : ?saison=nouvelan&vivant=1)
+    const vp = new URLSearchParams(location.search).get("vivant");
+    const vivant = vp != null ? vp !== "0" : !!N.vivant;
+    if (vivant) document.documentElement.classList.add("ny-vivant");
     const now = new Date();
     // L'année qui arrive (en janvier, c'est déjà l'année en cours)
     const year = now.getMonth() === 0 ? now.getFullYear() : now.getFullYear() + 1;
@@ -518,9 +522,25 @@
         ctx.quadraticCurveTo(x, y, x - r, y); ctx.quadraticCurveTo(x, y, x, y - r); ctx.fill();
       };
       let nextFw = performance.now() + 1500;
+      // Variante vivante : des fusées partent du bas de l'écran, montent avec une traînée et éclatent
+      let rockets = [], nextRocket = performance.now() + 900;
       const tick = (t) => {
         if (!document.hidden) {
           ctx.clearRect(0, 0, W, H);
+          if (vivant) {
+            if (t > nextRocket) {
+              rockets.push({ x: W * (.12 + Math.random() * .76), y: H + 8, vy: -(6.2 + Math.random() * 2.2), top: H * (.14 + Math.random() * .36), trail: [] });
+              nextRocket = t + 2200 + Math.random() * 1800;
+            }
+            rockets = rockets.filter((r) => {
+              r.trail.push([r.x, r.y]); if (r.trail.length > 10) r.trail.shift();
+              r.y += r.vy; r.vy *= .992; r.x += Math.sin(t / 200) * .3;
+              r.trail.forEach(([x, y], i) => { ctx.globalAlpha = i / 14; ctx.fillStyle = "#e8b23a"; ctx.beginPath(); ctx.arc(x, y, 1.6, 0, 7); ctx.fill(); });
+              if (r.y <= r.top) { burst(r.x, r.y, 56); return false; }
+              return true;
+            });
+            ctx.globalAlpha = 1;
+          }
           // Feux d'artifice quand la section noire est à l'écran
           if (N.fireworks && t > nextFw) {
             const v = $("video").getBoundingClientRect();
@@ -556,6 +576,20 @@
       }
       // Petite gerbe d'accueil
       setTimeout(() => burst(W * .5, Math.min(H * .3, 260), 60), 1400);
+      // Variante vivante : une pluie d'étincelles quand le compteur d'abonnés finit de monter
+      if (vivant) {
+        const tot = $("totalFollowers");
+        new IntersectionObserver((en, obs) => {
+          if (!en[0].isIntersecting) return;
+          obs.disconnect();
+          setTimeout(() => {
+            const r = tot.getBoundingClientRect();
+            burst(r.left + r.width * .3, r.top + r.height / 2, 50);
+            setTimeout(() => burst(r.left + r.width * .8, r.top, 50), 260);
+            tot.classList.add("ny-done");
+          }, 1750);
+        }, { threshold: .6 }).observe(tot);
+      }
     }
   }
 

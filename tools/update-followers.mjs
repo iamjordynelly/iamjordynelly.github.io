@@ -47,6 +47,7 @@ for (const [platform, get] of Object.entries(SOURCES)) {
 }
 
 if (!changed) { console.log("SAME"); process.exit(0); }
+src = src.replace(/updatedAt: "[^"]*"/, `updatedAt: "${new Date().toISOString().slice(0, 19)}Z"`);
 src = src.replace(/Chiffres relevés sur les profils publics le [\d/]+\./,
   "Chiffres relevés sur les profils publics le " + new Date().toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" }) + ".");
 writeFileSync(file, src);

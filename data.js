@@ -41,7 +41,7 @@ window.PROFILE = {
       baubles: true    // boules bleues suspendues
     }
   },
-  updatedAt: "2026-11-16T15:00:00Z",
+  updatedAt: "2026-11-22T12:30:00Z",
 
   // Le grand encart du haut affiche toujours la dernière vidéo (voir latestVideo plus bas).
 
