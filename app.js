@@ -267,10 +267,13 @@
   // ================= Décor de saison (Noël) =================
   // Une couche ajoutée par-dessus le site : on l'active ou on l'enlève depuis data.js.
   const activeSeason = (() => {
-    const s = P.season || "aucune";
+    // Aperçu : ?saison=nouvelan (ou noel, aucune) dans l'adresse
+    const preview = new URLSearchParams(location.search).get("saison");
+    const s = preview || P.season || "aucune";
     if (s !== "auto") return P.seasons?.[s] ? s : null;
     const d = new Date(), m = d.getMonth() + 1, day = d.getDate();
-    if ((m === 11 && day >= 15) || m === 12 || (m === 1 && day <= 6)) return "noel";
+    if ((m === 12 && day >= 28) || (m === 1 && day <= 6)) return P.seasons?.nouvelan ? "nouvelan" : "noel";
+    if ((m === 11 && day >= 15) || m === 12) return "noel";
     return null;
   })();
   if (activeSeason === "noel" && P.seasons?.noel) {
@@ -376,6 +379,183 @@
         requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
+    }
+  }
+
+  // ================= Décor de saison (Nouvel An) =================
+  // Doré + bleu Jordy & Nelly : titre qui scintille, boule à facettes, paillettes, feux d'artifice.
+  if (activeSeason === "nouvelan" && P.seasons?.nouvelan) {
+    const N = P.seasons.nouvelan;
+    document.documentElement.dataset.season = "nouvelan";
+    const now = new Date();
+    // L'année qui arrive (en janvier, c'est déjà l'année en cours)
+    const year = now.getMonth() === 0 ? now.getFullYear() : now.getFullYear() + 1;
+    const midnight = new Date(year, 0, 1);
+    const fill = (s) => esc(String(s || "").replace(/\{annee\}/g, year));
+    const SPARK = `<svg class="ny-spark" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 1.5c.7 4.6 2.6 7.6 9 10.5-6.4 2.9-8.3 5.9-9 10.5-.7-4.6-2.6-7.6-9-10.5 6.4-2.9 8.3-5.9 9-10.5z" fill="url(#nyGold)"/>
+      <path d="M19.5 1.5c.25 1.6.9 2.6 3 3.5-2.1.9-2.75 1.9-3 3.5-.25-1.6-.9-2.6-3-3.5 2.1-.9 2.75-1.9 3-3.5z" fill="#1e20cd"/>
+      <defs><linearGradient id="nyGold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe7a3"/><stop offset=".5" stop-color="#e0a92e"/><stop offset="1" stop-color="#b07a12"/></linearGradient></defs></svg>`;
+
+    // Bandeau : compte à rebours jusqu'à minuit, puis "Bonne année"
+    if (N.ribbon) {
+      $("nav").insertAdjacentHTML("afterend", `
+        <div class="ribbon ny-ribbon">${SPARK}<span id="nyText"></span>${N.ribbonLink ? `<a class="ribbon-link" href="${esc(N.ribbonLink.url)}" target="_blank" rel="noopener">${esc(N.ribbonLink.label)}</a>` : ""}</div>`);
+      const txt = $("nyText");
+      const two = (n) => String(n).padStart(2, "0");
+      const update = () => {
+        const left = midnight - Date.now();
+        if (left <= 0) { txt.innerHTML = fill(N.ribbonAfter || N.ribbon); return false; }
+        const s = Math.floor(left / 1000), d = Math.floor(s / 86400), h = Math.floor(s / 3600) % 24, m = Math.floor(s / 60) % 60;
+        const count = d >= 1 ? `J-${d + (h || m ? 1 : 0)}` : `${two(h)}:${two(m)}:${two(s % 60)}`;
+        txt.innerHTML = `${fill(N.ribbon)} <b class="ny-count">${count}</b>`;
+        return true;
+      };
+      if (update()) {
+        const iv = setInterval(() => { if (!update()) { clearInterval(iv); if (!reduce) burst(innerWidth / 2, innerHeight * .35, 90); } }, 1000);
+      }
+    }
+
+    // Titre : un reflet doré passe sur "Jordy" et "Nelly", la photo prend un liseré doré
+    $("name").classList.add("ny-shine");
+
+    // Boule à facettes + étoile dorée, suspendues en haut à droite (même place que les boules de Noël)
+    const decor = document.createElement("div");
+    decor.className = "baubles"; decor.setAttribute("aria-hidden", "true");
+    $("top").prepend(decor);
+    if (N.disco) {
+      // Facettes : une grille de petits carrés, en dégradé argent/bleu, dont quelques-uns s'allument
+      let tiles = "";
+      for (let y = 4; y < 46; y += 5) for (let x = 1; x < 41; x += 5) {
+        const r = Math.random();
+        const c = r < .12 ? "#ffffff" : r < .3 ? "#cfd5ea" : r < .55 ? "#9aa3c7" : r < .8 ? "#6b73a8" : "#4f52ff";
+        tiles += `<rect x="${x}" y="${y}" width="4.4" height="4.4" rx=".6" fill="${c}"${r < .2 ? ` class="tw" style="animation-delay:${(-Math.random() * 2.4).toFixed(2)}s"` : ""}/>`;
+      }
+      decor.insertAdjacentHTML("beforeend", `
+        <span class="bauble b-long ny-disco" style="animation-delay:0s"><i class="string"></i>
+          <svg viewBox="0 0 42 48"><defs><clipPath id="dball"><circle cx="21" cy="27" r="19"/></clipPath>
+            <radialGradient id="dshade" cx="35%" cy="35%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#0b0c6b" stop-opacity=".55"/></radialGradient></defs>
+            <rect x="16" y="0" width="10" height="7" rx="1.5" fill="#e0b54a"/>
+            <g clip-path="url(#dball)"><circle cx="21" cy="27" r="19" fill="#3a3f78"/>${tiles}<circle cx="21" cy="27" r="19" fill="url(#dshade)"/></g>
+          </svg>
+          <i class="glint g1"></i><i class="glint g2"></i><i class="glint g3"></i>
+        </span>
+        <span class="bauble b-short ny-star" style="animation-delay:-1.4s"><i class="string"></i>
+          <svg viewBox="0 0 40 40"><defs><linearGradient id="starG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1c4"/><stop offset=".45" stop-color="#e8b23a"/><stop offset="1" stop-color="#a8700c"/></linearGradient></defs>
+            <path d="M20 1.5l5.3 11.6 12.6 1.4-9.4 8.5 2.6 12.4L20 29.1 8.9 35.4l2.6-12.4-9.4-8.5 12.6-1.4z" fill="url(#starG)"/>
+            <path d="M20 6l3.6 8.2 8.8 1-6.6 6" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.2" stroke-linecap="round"/></svg>
+        </span>`);
+    }
+    const placeDecor = () => {
+      const nameEl = $("name"), heroW = $("top").offsetWidth;
+      const fs = parseFloat(getComputedStyle(nameEl).fontSize);
+      const mobile = innerWidth < 640;
+      const titleTop = nameEl.offsetTop + fs * 0.14;
+      const long = decor.querySelector(".b-long"), short = decor.querySelector(".b-short");
+      if (!long) return;
+      const size = mobile ? 36 : 54, ss = mobile ? 24 : 32;
+      const right = Math.min(heroW, (heroW + 1024) / 2) - (mobile ? 36 : 52);
+      long.style.setProperty("--size", size + "px");
+      long.style.setProperty("--len", Math.max(14, (titleTop - size * 1.15) * 0.5) + "px");
+      long.style.left = (right - size / 2) + "px";
+      short.style.setProperty("--size", ss + "px");
+      short.style.setProperty("--len", (mobile ? 12 : 20) + "px");
+      short.style.left = (right - size - ss / 2 - 6) + "px";
+    };
+    placeDecor();
+    addEventListener("resize", placeDecor);
+    document.fonts?.ready.then(placeDecor);
+    setTimeout(placeDecor, 1900);
+
+    // Deux coupes de champagne qui trinquent, posées sur le bord haut de la section noire
+    $("video").insertAdjacentHTML("afterbegin", `
+      <svg class="xmas-big ny-flutes" viewBox="0 0 80 80" aria-hidden="true">
+        <defs><linearGradient id="champ" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#e2a93a"/></linearGradient></defs>
+        <g transform="rotate(-14 30 70)">
+          <path d="M18 8 H36 L33 34 Q27 40 21 34 Z" fill="#fff" fill-opacity=".14" stroke="#cfd5ea" stroke-width="1.4"/>
+          <path d="M19.6 16 H34.4 L32.4 33 Q27 38 21.6 33 Z" fill="url(#champ)"/>
+          <path d="M27 38 V64 M19 66 H35" stroke="#cfd5ea" stroke-width="2" stroke-linecap="round"/>
+          <circle class="bub" cx="25" cy="30" r="1"/><circle class="bub" cx="29" cy="26" r=".8" style="animation-delay:-.7s"/><circle class="bub" cx="27" cy="32" r=".9" style="animation-delay:-1.3s"/>
+        </g>
+        <g transform="rotate(14 50 70)">
+          <path d="M44 8 H62 L59 34 Q53 40 47 34 Z" fill="#fff" fill-opacity=".14" stroke="#cfd5ea" stroke-width="1.4"/>
+          <path d="M45.6 16 H60.4 L58.4 33 Q53 38 47.6 33 Z" fill="url(#champ)"/>
+          <path d="M53 38 V64 M45 66 H61" stroke="#cfd5ea" stroke-width="2" stroke-linecap="round"/>
+          <circle class="bub" cx="51" cy="29" r=".9" style="animation-delay:-.4s"/><circle class="bub" cx="55" cy="25" r="1" style="animation-delay:-1s"/>
+        </g>
+        <g class="clink"><path d="M40 2 v5 M33 4 l3 4 M47 4 l-3 4" stroke="#f3cf6a" stroke-width="1.8" stroke-linecap="round"/></g>
+      </svg>`);
+
+    // ---------- Paillettes + feux d'artifice (un seul canvas pour toute la page) ----------
+    let burst = () => {};
+    if (!reduce && (N.glitter || N.fireworks)) {
+      const cv = document.createElement("canvas");
+      cv.className = "snow"; cv.setAttribute("aria-hidden", "true");
+      document.body.appendChild(cv);
+      const ctx = cv.getContext("2d");
+      const GOLD = ["#f6d77a", "#e8b23a", "#fff1c4", "#c98d1c"], BLUE = ["#1e20cd", "#4f52ff", "#8a8cff"];
+      const pick = (a) => a[Math.floor(Math.random() * a.length)];
+      let W, H, glitter = [], sparks = [];
+      const size = () => {
+        const r = devicePixelRatio || 1;
+        W = innerWidth; H = innerHeight; cv.width = W * r; cv.height = H * r; ctx.setTransform(r, 0, 0, r, 0, 0);
+        glitter = N.glitter ? Array.from({ length: Math.round(W / 22) + 12 }, () => ({
+          x: Math.random() * W, y: Math.random() * H, w: Math.random() * 4 + 3, h: Math.random() * 2 + 1.5,
+          s: Math.random() * .6 + .35, rot: Math.random() * 6, vr: (Math.random() - .5) * .08, o: Math.random() * 6,
+          c: Math.random() < .72 ? pick(GOLD) : pick(BLUE), star: Math.random() < .18 })) : [];
+      };
+      size(); addEventListener("resize", size);
+      // Une gerbe d'étincelles (feu d'artifice) en x, y
+      burst = (x, y, n = 46) => {
+        const c1 = Math.random() < .6 ? pick(GOLD) : pick(BLUE), c2 = pick(GOLD);
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2 + Math.random() * .2, v = Math.random() * 2.2 + 1.6;
+          sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, c: i % 3 ? c1 : c2 });
+        }
+      };
+      const star4 = (x, y, r) => {
+        ctx.beginPath(); ctx.moveTo(x, y - r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.quadraticCurveTo(x, y, x, y + r);
+        ctx.quadraticCurveTo(x, y, x - r, y); ctx.quadraticCurveTo(x, y, x, y - r); ctx.fill();
+      };
+      let nextFw = performance.now() + 1500;
+      const tick = (t) => {
+        if (!document.hidden) {
+          ctx.clearRect(0, 0, W, H);
+          // Feux d'artifice quand la section noire est à l'écran
+          if (N.fireworks && t > nextFw) {
+            const v = $("video").getBoundingClientRect();
+            const top = Math.max(v.top + 40, 60), bottom = Math.min(v.bottom - 40, H - 40);
+            if (bottom - top > 120) burst(W * (.15 + Math.random() * .7), top + Math.random() * Math.min(260, bottom - top));
+            nextFw = t + 1800 + Math.random() * 2600;
+          }
+          for (const g of glitter) {
+            g.y += g.s; g.x += Math.sin(t / 1400 + g.o) * .4; g.rot += g.vr;
+            if (g.y > H + 6) { g.y = -6; g.x = Math.random() * W; }
+            // Scintillement : chaque paillette "accroche la lumière" quand elle tourne
+            const flash = Math.abs(Math.sin(t / 380 + g.o * 3));
+            ctx.globalAlpha = .35 + .6 * flash;
+            ctx.fillStyle = g.c;
+            if (g.star) star4(g.x, g.y, 2.5 + 2.5 * flash);
+            else { ctx.save(); ctx.translate(g.x, g.y); ctx.rotate(g.rot); ctx.scale(1, Math.cos(t / 500 + g.o)); ctx.fillRect(-g.w / 2, -g.h / 2, g.w, g.h); ctx.restore(); }
+          }
+          sparks = sparks.filter((p) => p.life > 0);
+          for (const p of sparks) {
+            p.x += p.vx; p.y += p.vy; p.vy += .035; p.vx *= .985; p.vy *= .985; p.life -= .012;
+            ctx.globalAlpha = Math.max(0, p.life);
+            ctx.fillStyle = p.c;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 1.6 + p.life, 0, 7); ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      // Toucher la grande photo du titre ou le bandeau = une gerbe d'étincelles là où on touche
+      for (const el of [$("name"), document.querySelector(".ny-ribbon")]) {
+        el?.addEventListener("pointerdown", (e) => burst(e.clientX, e.clientY, 36));
+      }
+      // Petite gerbe d'accueil
+      setTimeout(() => burst(W * .5, Math.min(H * .3, 260), 60), 1400);
     }
   }
 

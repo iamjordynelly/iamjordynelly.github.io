@@ -325,6 +325,53 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .xmas-big .tw { animation: twinkle 2.4s ease-in-out infinite; }
 @keyframes twinkle { 50% { opacity: .35; } }
 
+/* ================= Décor du Nouvel An ================= */
+.ny-spark { width: 22px; height: 22px; stroke: none; animation: sparkSpin 3s ease-in-out infinite; }
+@keyframes sparkSpin { 50% { transform: scale(.8) rotate(20deg); } }
+.ny-ribbon {
+  background:
+    linear-gradient(100deg, transparent 30%, rgba(255,232,160,.55) 45%, transparent 60%) 0 0 / 250% 100% no-repeat,
+    var(--bg-alt);
+  animation: ribbonShine 5s ease-in-out infinite;
+}
+@keyframes ribbonShine { from { background-position: 130% 0, 0 0; } 60%, to { background-position: -130% 0, 0 0; } }
+.ny-count {
+  display: inline-block; margin-left: 4px; padding: 1px 9px; border-radius: 980px; font-weight: 600;
+  font-variant-numeric: tabular-nums; color: #fff; background: linear-gradient(135deg, #e8b23a, #c98d1c);
+}
+/* Titre : reflet doré qui passe sur les lettres */
+.ny-shine > span[aria-hidden="true"]:not(.title-photo) {
+  background: linear-gradient(100deg, var(--text) 0 38%, #f3cf6a 46%, #fff6d8 50%, #e0a92e 54%, var(--text) 62% 100%);
+  background-size: 300% 100%; background-position: 100% 0;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: titleShine 6s ease-in-out 2s infinite;
+}
+.ny-shine > span[aria-hidden="true"]:last-child { animation-delay: 2.35s; }
+@keyframes titleShine { from { background-position: 100% 0; } 45%, to { background-position: 0 0; } }
+.ny-shine .title-photo { box-shadow: 0 0 0 .045em #e8b23a, 0 0 .35em rgba(232,178,58,.55); }
+/* Boule à facettes : reflets qui s'allument autour */
+.ny-disco { filter: drop-shadow(0 10px 18px rgba(30,32,205,.28)); }
+.ny-disco .tw, .ny-flutes .tw { animation: twinkle 2.4s ease-in-out infinite; }
+.ny-disco svg { animation: discoTurn 7s linear infinite; }
+@keyframes discoTurn { 50% { filter: hue-rotate(18deg) brightness(1.15); } }
+.glint {
+  position: absolute; width: 12px; height: 12px; pointer-events: none;
+  background: radial-gradient(circle, #fff 0 18%, transparent 20%), conic-gradient(from 45deg, transparent 0 20%, #fff 22% 28%, transparent 30% 45%, #fff 47% 53%, transparent 55% 70%, #fff 72% 78%, transparent 80%);
+  border-radius: 50%; opacity: 0; animation: glint 2.8s ease-in-out infinite;
+}
+.glint.g1 { left: 10%; bottom: 40%; }
+.glint.g2 { right: -6px; bottom: 18%; animation-delay: -1s; width: 9px; height: 9px; }
+.glint.g3 { left: 40%; bottom: -4px; animation-delay: -1.9s; width: 10px; height: 10px; }
+@keyframes glint { 0%, 70%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 82% { opacity: 1; transform: scale(1.2) rotate(45deg); } }
+.ny-star { filter: drop-shadow(0 8px 14px rgba(201,141,28,.35)); }
+/* Coupes de champagne : bulles qui montent, petit "tchin" */
+.ny-flutes { width: 72px; filter: drop-shadow(0 6px 12px rgba(226,169,58,.25)); }
+@media (min-width: 834px) { .ny-flutes { width: 104px; } }
+.ny-flutes .bub { fill: #fff8de; animation: bubble 2s ease-in infinite; }
+@keyframes bubble { from { transform: translateY(0); opacity: .9; } to { transform: translateY(-14px); opacity: 0; } }
+.ny-flutes .clink { animation: clink 2.4s ease-in-out infinite; transform-origin: 40px 6px; }
+@keyframes clink { 0%, 55%, 100% { opacity: 0; transform: scale(.6); } 65% { opacity: 1; transform: scale(1.1); } }
+
 /* ================= Toast ================= */
 .toast { position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 16px); opacity: 0; padding: 12px 20px; border-radius: 14px; background: var(--nav); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); box-shadow: var(--shadow-hover); font-size: 15px; font-weight: 500; transition: all .35s ease; z-index: 70; pointer-events: none; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }

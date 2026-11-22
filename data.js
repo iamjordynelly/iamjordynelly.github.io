@@ -20,10 +20,20 @@ window.PROFILE = {
   theme: "auto", // "auto" = suit le mode clair/sombre du téléphone · "light" · "dark"
 
   // Décor de saison, ajouté par-dessus le site sans le modifier.
-  // "auto" = Noël s'active tout seul du 15 novembre au 6 janvier.
-  // "noel" = forcer Noël · "aucune" = site normal
+  // "auto" = Noël du 15 novembre au 27 décembre, puis Nouvel An du 28 décembre au 6 janvier.
+  // "noel" / "nouvelan" = forcer une saison · "aucune" = site normal
+  // Aperçu sans rien changer : ajouter ?saison=nouvelan à l'adresse du site.
   season: "auto",
   seasons: {
+    nouvelan: {
+      // {annee} est remplacé par l'année qui arrive. Le compte à rebours s'ajoute tout seul avant minuit.
+      ribbon: "On se retrouve en {annee}",
+      ribbonAfter: "Bonne année {annee} ! Merci d'être là ✨",
+      ribbonLink: { label: "Revivre l'année avec nous", url: "https://www.youtube.com/@iamjordynelly/videos" },
+      glitter: true,     // paillettes dorées et bleues qui tombent
+      fireworks: true,   // petits feux d'artifice sur la section noire
+      disco: true        // boule à facettes + étoile dorée suspendues
+    },
     noel: {
       ribbon: "C'est la saison du calendrier de l'Avent.",
       ribbonLink: { label: "Regarder la vidéo", url: "https://www.youtube.com/watch?v=e0cCLSJNSPY" },
