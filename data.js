@@ -3,7 +3,7 @@
 //  Plus tard, un robot (GitHub Actions) mettra à jour
 //  automatiquement les abonnés et la dernière vidéo ici.
 //
-//  Chiffres relevés sur les profils publics le 22/11/2026.
+//  Chiffres relevés sur les profils publics le 24/11/2026.
 //  followers: null = pas encore renseigné (à compléter).
 // ============================================================
 const YT = (id) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
@@ -41,7 +41,7 @@ window.PROFILE = {
       baubles: true    // boules bleues suspendues
     }
   },
-  updatedAt: "2026-11-22T12:30:00Z",
+  updatedAt: "2026-11-24T06:04:33Z",
 
   // Le grand encart du haut affiche toujours la dernière vidéo (voir latestVideo plus bas).
 
@@ -62,7 +62,7 @@ window.PROFILE = {
     { platform: "youtube",   handle: "@iamjordynelly", url: "https://www.youtube.com/@iamjordynelly?sub_confirmation=1",  followers: 2190,   cta: "S'abonner" },
     { platform: "threads",   handle: "@iamjordynelly", url: "https://www.threads.com/@iamjordynelly",  followers: 480,    cta: "Suivre" },
     { platform: "facebook",  handle: "iamjordynelly",  url: "https://www.facebook.com/p/iamjordynelly-100075907790832/", followers: 705,   cta: "Suivre" },
-    { platform: "bereal",    handle: "iamjordynelly",  url: "https://bere.al/iamjordynelly",           followers: 252,    cta: "Ajouter" }
+    { platform: "bereal",    handle: "iamjordynelly",  url: "https://bere.al/iamjordynelly",           followers: 255,    cta: "Ajouter" }
   ],
 
   latestVideo: {
